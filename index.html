@@ -758,7 +758,7 @@
 
     <div id="quoteEmpty" class="quote-empty">
       <div class="qe-icon">📋</div>
-      <p>Search for products and click<br><strong>+</strong> to add them to your quote.</p>
+      <p>Search for products on the left and click<br><strong>+</strong> to add them to your quote.</p>
     </div>
 
     <div id="quoteList" style="display:none"></div>
@@ -770,9 +770,8 @@
       </div>
       <div class="total-items" id="totalItems">0 line items</div>
 
-      <div class="action-btns">
-        <button class="btn btn-gold" onclick="triggerAction('print')">🖨 Print</button>
-        <button class="btn btn-outline" onclick="triggerAction('save')">💾 Save PDF</button>
+      <div class="action-btns" style="grid-template-columns: 1fr;">
+        <button class="btn btn-gold" onclick="triggerAction('save')">🖨 Print / Save PDF</button>
       </div>
       <button class="btn btn-clear" onclick="clearQuote()">✕ Clear Quote</button>
     </div>
@@ -783,7 +782,7 @@
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <h2>Project Details</h2>
-    <p>Enter a project name to label this quote before <span id="actionLabel">printing</span>.</p>
+    <p>Enter a project name to label this quote before <span id="actionLabel">printing</span>. To save as PDF, choose <strong>"Save as PDF"</strong> as the destination in the print dialog.</p>
     <label for="projectName">Project Name</label>
     <input type="text" id="projectName" placeholder="e.g. Smith Residence - Roof 2025" maxlength="80" />
     <div class="modal-actions">
