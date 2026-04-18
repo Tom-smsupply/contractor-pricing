@@ -357,6 +357,21 @@
   .no-results .nr-icon { font-size: 40px; margin-bottom: 12px; }
   .no-results p { font-size: 14px; }
 
+  .search-prompt {
+    text-align: center;
+    padding: 14px 20px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    font-size: 13px;
+  }
+
+  .search-prompt .sp-icon { font-size: 18px; opacity: 0.5; }
+
   /* RIGHT PANEL - Quote List */
   .quote-header {
     margin-bottom: 20px;
@@ -900,10 +915,7 @@ function doSearch() {
 }
 
 function showPrompt() {
-  resultsDiv.innerHTML = `<div class="no-results" style="padding-top:32px;">
-    <div class="nr-icon">🏗</div>
-    <p>Start typing to search<br>from <strong>777 products</strong></p>
-  </div>`;
+  resultsDiv.innerHTML = `<div class="search-prompt"><span class="sp-icon">🏗</span><span>Start typing to search <strong>777 products</strong></span></div>`;
 }
 
 showPrompt();
