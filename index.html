@@ -725,7 +725,7 @@
       <input type="text" id="searchInput" placeholder='e.g. "standing seam ridge cap" or "tuff rib black"' autocomplete="off" />
     </div>
     <div class="search-hint">
-      💡 Type naturally — "standing seam" finds all <em>Stnd Seam</em> products automatically
+      💡 Type naturally — "standing seam" finds all <em>Stnd Seam</em> products. Tap an item to add it; tap again to remove it.
     </div>
     <div class="results-meta">
       <span id="resultsCount" class="results-count"></span>
@@ -909,9 +909,10 @@ function showPrompt() {
 showPrompt();
 
 function addItem(productIdx) {
-  const existing = quote.find(q => q.id === productIdx);
-  if (existing) {
-    existing.qty += 1;
+  const existingIdx = quote.findIndex(q => q.id === productIdx);
+  if (existingIdx !== -1) {
+    // Already in quote — remove it (uncheck)
+    quote.splice(existingIdx, 1);
     renderQuote();
     doSearch();
     return;
@@ -920,6 +921,17 @@ function addItem(productIdx) {
   quote.push({ id: productIdx, name: p.name, price: p.price, qty: 1 });
   renderQuote();
   doSearch();
+  // Collapse search and scroll to quote panel
+  searchInput.value = '';
+  resultsDiv.innerHTML = '';
+  resultsCount.textContent = '';
+  resultsNote.textContent = '';
+  showPrompt();
+  // On mobile, scroll down to the quote panel
+  const rightPanel = document.querySelector('.right-panel');
+  if (rightPanel && window.innerWidth <= 700) {
+    rightPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 
 function removeItem(idx) {
@@ -931,7 +943,6 @@ function removeItem(idx) {
 function updateQty(idx, val) {
   const n = parseInt(val);
   quote[idx].qty = (isNaN(n) || n < 1) ? 1 : n;
-  // Update subtotal and total in-place without rebuilding DOM
   updateTotalsInPlace();
 }
 
@@ -958,7 +969,9 @@ function renderQuote() {
         <span class="qty-label">Qty</span>
         <div class="qty-control">
           <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
-          <input class="qty-input" type="number" min="1" value="${item.qty}" onchange="updateQty(${i}, this.value)" />
+          <input class="qty-input" type="number" min="1" value="${item.qty}"
+            oninput="updateQtyLive(${i}, this)"
+            onchange="updateQty(${i}, this.value)" />
           <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
         </div>
         <div class="qi-subtotal">$${sub}</div>
@@ -982,6 +995,15 @@ function updateTotalsInPlace() {
   const totalQty = quote.reduce((s, item) => s + item.qty, 0);
   totalAmountEl.textContent = '$' + total.toFixed(2);
   totalItemsEl.textContent = `${quote.length} line item${quote.length !== 1 ? 's' : ''} · ${totalQty} unit${totalQty !== 1 ? 's' : ''} total`;
+}
+
+// Live update on every keystroke — reads input value directly, doesn't commit to quote[] until onchange
+function updateQtyLive(idx, inputEl) {
+  const n = parseInt(inputEl.value);
+  if (!isNaN(n) && n >= 1) {
+    quote[idx].qty = n;
+    updateTotalsInPlace();
+  }
 }
 
 function changeQty(idx, delta) {
